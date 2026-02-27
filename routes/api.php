@@ -15,6 +15,6 @@ Route::get("role", [RoleController::class, 'index']);
 Route::post("role", [RoleController::class, 'store']);
 Route::get("role/{id}", [RoleController::class, 'show']);
 Route::put("role/{id}", [RoleController::class, 'update']);
-Route::delete("role/{id}", [RoleController::class, 'delete']);
+Route::delete("role/{id}", [RoleController::class, 'destroy']);
 
 // គេអាចធ្វើការសរសេរតែមួយ Line គឺស្គាល់ 5 Route ខាងលើ ប៉ុន្ដែលុះត្រាតែ Function Name ត្រូវដូចប្រាំខាងលើទើបប្រើកូដមួយបន្ទាត់ខាងក្រោមដើរ
