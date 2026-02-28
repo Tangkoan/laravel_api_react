@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\api\RoleController;
 use App\Http\Controllers\api\CategoryController;
+use App\Http\Controllers\api\BrandController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -29,6 +30,17 @@ Route::controller(CategoryController::class)->group(function () {
     Route::delete('categories/{id}', 'destroy');
     // Route សម្រាប់ប្តូរ Status
     Route::put('categories/{id}/status', 'updateStatus'); 
+});
+
+// Route របស់ Brand សម្រាប់ CRUD
+Route::controller(BrandController::class)->group(function () {
+    Route::get('brands', 'index');
+    Route::post('brands', 'store');
+    Route::get('brands/{id}', 'show');
+    Route::post('brands/{id}', 'update');
+    Route::delete('brands/{id}', 'destroy');
+    // Route សម្រាប់ប្តូរ Status
+    Route::put('brands/{id}/status', 'updateStatus'); 
 });
 
 // គេអាចធ្វើការសរសេរតែមួយ Line គឺស្គាល់ 5 Route ខាងលើ ប៉ុន្ដែលុះត្រាតែ Function Name ត្រូវដូចប្រាំខាងលើទើបប្រើកូដមួយបន្ទាត់ខាងក្រោមដើរ
