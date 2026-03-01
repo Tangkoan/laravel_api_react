@@ -16,7 +16,7 @@ Route::controller(RoleController::class)->group(function () {
     Route::get('role', 'index');
     Route::post('role', 'store');
     Route::get('role/{id}', 'show');
-    Route::put('role/{id}', 'update');
+    Route::post('role/{id}', 'update');
     Route::delete('role/{id}', 'destroy');
 });
 

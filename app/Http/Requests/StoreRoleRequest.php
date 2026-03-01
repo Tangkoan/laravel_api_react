@@ -22,15 +22,19 @@ class StoreRoleRequest extends FormRequest
         return [
             'name' => 'required|unique:roles,name,' . $id,
             'code' => 'required',
+            'description' => 'required',
+            'status' => 'required',
         ];
     }
 
     public function messages(): array
     {
         return [
-            'name.unique'   => 'ឈ្មោះនេះមានរួចហើយ!',
-            'name.required' => 'សូមបញ្ចូលឈ្មោះ Role!',
-            'code.required' => 'សូមបញ្ចូលកូដ Role!',
+            'name.unique'   => 'This Role already!',
+            'name.required' => 'Please Enter Role Name!',
+            'code.required' => 'Please Enter Role Code!',
+            'description.required' => 'Please Enter Description!',
+            'status.required' => 'Please Select Status!',
         ];
     }
 
