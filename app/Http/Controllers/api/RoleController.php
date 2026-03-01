@@ -35,7 +35,7 @@ class RoleController extends Controller
 
    public function index(Request $request): JsonResponse
 {
-    $data = Role::query();
+    $data = Role::querys();
 
     // ១. ប្រើ LIKE ដើម្បី Search រកពាក្យខ្លះៗ (ឧទាហរណ៍៖ វាយ "a" ឃើញទាំង "Admin" និង "Agent")
     if ($request->filled("text_search")) {
