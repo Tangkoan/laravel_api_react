@@ -14,8 +14,11 @@ return [
     */
 
     'defaults' => [
-        'guard' => env('AUTH_GUARD', 'web'),
-        'passwords' => env('AUTH_PASSWORD_BROKER', 'users'),
+        // 'guard' => env('AUTH_GUARD', 'web'),
+        // 'passwords' => 'users',
+
+        'guard' => 'web', // រក្សាទុក web ជាមេ ដើម្បីឱ្យ Blade ដើរធម្មតា
+        'passwords' => 'users',
     ],
 
     /*
@@ -39,6 +42,11 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+        ],
+
+        'api' => [
+                'driver' => 'jwt', // កំណត់ឱ្យប្រើ jwt driver
+                'provider' => 'users',
         ],
     ],
 
