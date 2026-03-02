@@ -25,7 +25,7 @@ Route::controller(CategoryController::class)->group(function () {
     Route::get('categories', 'index');
     Route::post('categories', 'store');
     Route::get('categories/{id}', 'show');
-    Route::put('categories/{id}', 'update');
+    Route::post('categories/{id}', 'update');
     Route::delete('categories/{id}', 'destroy');
     // Route សម្រាប់ប្តូរ Status
     Route::put('categories/{id}/status', 'updateStatus'); 

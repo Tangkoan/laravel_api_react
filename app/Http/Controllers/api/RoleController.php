@@ -34,30 +34,30 @@ class RoleController extends Controller
     // }
 
    public function index(Request $request): JsonResponse
-{
-    $data = Role::querys();
+    {
+            $data = Role::query();
 
-    // ១. ប្រើ LIKE ដើម្បី Search រកពាក្យខ្លះៗ (ឧទាហរណ៍៖ វាយ "a" ឃើញទាំង "Admin" និង "Agent")
-    if ($request->filled("text_search")) {
-        $searchText = $request->input("text_search");
-        $data->where(function($q) use ($searchText) {
-            $q->where("name", "LIKE", "%" . $searchText . "%")
-              ->orWhere("id", "LIKE", "%" . $searchText . "%"); // បើចង់ Search តាម ID ដែរ
-        });
+            // ១. ប្រើ LIKE ដើម្បី Search រកពាក្យខ្លះៗ (ឧទាហរណ៍៖ វាយ "a" ឃើញទាំង "Admin" និង "Agent")
+            if ($request->filled("text_search")) {
+                $searchText = $request->input("text_search");
+                $data->where(function($q) use ($searchText) {
+                    $q->where("name", "LIKE", "%" . $searchText . "%")
+                    ->orWhere("id", "LIKE", "%" . $searchText . "%"); // បើចង់ Search តាម ID ដែរ
+                });
+            }
+
+            // ២. ឆែក Status (ត្រូវប្រាកដថាផ្ញើមកពី Frontend ត្រឹមត្រូវ)
+            if ($request->filled("status")) {
+                $data->where("status", $request->input("status"));
+            }
+
+            $list = $data->orderBy('id', 'desc')->get();
+
+            return response()->json([
+                'status' => 'success',
+                'data'   => $list
+            ]);
     }
-
-    // ២. ឆែក Status (ត្រូវប្រាកដថាផ្ញើមកពី Frontend ត្រឹមត្រូវ)
-    if ($request->filled("status")) {
-        $data->where("status", $request->input("status"));
-    }
-
-    $list = $data->orderBy('id', 'desc')->get();
-
-    return response()->json([
-        'status' => 'success',
-        'data'   => $list
-    ]);
-}
 
     /**
      * បង្កើតទិន្នន័យថ្មី
