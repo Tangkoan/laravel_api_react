@@ -22,21 +22,39 @@ Route::controller(RoleController::class)->group(function () {
 });
 
 // Route របស់ Category សម្រាប់ CRUD
-Route::controller(CategoryController::class)->group(function () {
-    Route::get('categories', 'index');
-    Route::post('categories', 'store');
-    Route::get('categories/{id}', 'show');
-    Route::post('categories/{id}', 'update');
-    Route::delete('categories/{id}', 'destroy');
-    // Route សម្រាប់ប្តូរ Status
-    Route::put('categories/{id}/status', 'updateStatus'); 
-});
+// Route::controller(CategoryController::class)->group(function () {
+//     // Route::get('categories', 'index');
+//     Route::post('categories', 'store');
+//     Route::get('categories/{id}', 'show');
+//     Route::post('categories/{id}', 'update');
+//     Route::delete('categories/{id}', 'destroy');
+//     // Route សម្រាប់ប្តូរ Status
+//     Route::put('categories/{id}/status', 'updateStatus'); 
+// });
 
 
 // Auth
 Route::controller(AuthController::class)->group(function () {
     Route::post('register', 'register');
     Route::post('login', 'login');
+});
+
+
+// យើងបង្កើត middleware
+// ប្រើ middleware('auth:api') ផ្ទាល់តែម្តង
+Route::middleware(['auth:api'])->group(function() {
+
+    Route::controller(CategoryController::class)->group(function () {
+        // ដកចេញវិញសម្រាប់តែ index និង show ដើម្បីឱ្យគេមើលបានសេរី
+        Route::get('categories', 'index')->withoutMiddleware(['auth:api']);
+        Route::get('categories/{id}', 'show')->withoutMiddleware(['auth:api']);
+        // Route ខាងក្រោមនេះនឹងជាប់ Middleware ទាំងអស់
+        Route::post('categories', 'store');
+        Route::post('categories/{id}', 'update');
+        Route::delete('categories/{id}', 'destroy');
+        Route::put('categories/{id}/status', 'updateStatus'); 
+    });
+    
 });
 
 // គេអាចធ្វើការសរសេរតែមួយ Line គឺស្គាល់ 5 Route ខាងលើ ប៉ុន្ដែលុះត្រាតែ Function Name ត្រូវដូចប្រាំខាងលើទើបប្រើកូដមួយបន្ទាត់ខាងក្រោមដើរ

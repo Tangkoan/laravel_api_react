@@ -46,6 +46,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message'=> "Login successfully",
+            'user'=> JWTAuth::user(),
             'access_token'=> $token
         ], 201);
 
