@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\api\RoleController;
 use App\Http\Controllers\api\CategoryController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\BrandController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -53,6 +54,19 @@ Route::middleware(['auth:api'])->group(function() {
         Route::post('categories/{id}', 'update');
         Route::delete('categories/{id}', 'destroy');
         Route::put('categories/{id}/status', 'updateStatus'); 
+    });
+
+
+    // Brand
+    Route::controller(BrandController::class)->group(function () {
+        // ដកចេញវិញសម្រាប់តែ index និង show ដើម្បីឱ្យគេមើលបានសេរី
+        Route::get('brand', 'index')->withoutMiddleware(['auth:api']);
+        Route::get('brand/{id}', 'show')->withoutMiddleware(['auth:api']);
+        // Route ខាងក្រោមនេះនឹងជាប់ Middleware ទាំងអស់
+        Route::post('brand', 'store');
+        Route::post('brand/{id}', 'update');
+        Route::delete('brand/{id}', 'destroy');
+        Route::put('brand/{id}/status', 'updateStatus'); 
     });
     
 });
