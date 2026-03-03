@@ -59,4 +59,9 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims() {
         return [];
     }
+
+    // ភ្ជាប់ទំនាក់ទំនង Table បែរ Eloquent ORM ប៉ុន្ដែ Profile Models ក៏ត្រូវភ្ជាប់ដែរ (1-to-1 relationship)
+    public function profile(){
+        return $this->hasOne(Profile::class);
+    }
 }
