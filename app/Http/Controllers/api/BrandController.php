@@ -10,19 +10,41 @@ use Illuminate\Support\Facades\Storage;
 class BrandController extends Controller
 {
     // ១. បង្ហាញ Brand ទាំងអស់
-    public function index()
+    public function index(Request $request)
     {
-        $brands = Brand::latest()->get()->map(function ($brand) {
+        // ១. បង្កើត Query Builder
+        $query = Brand::query();
+
+        // ២. មុខងារ Search (តាម Name ឬ ID)
+        if ($request->filled("text_search")) {
+            $searchText = $request->input("text_search");
+            $query->where(function($q) use ($searchText) {
+                $q->where("name", "LIKE", "%" . $searchText . "%")
+                ->orWhere("id", "LIKE", "%" . $searchText . "%")
+                ->orWhere("code", "LIKE", "%" . $searchText . "%"); // បន្ថែម Search តាម Code ក៏បាន
+            });
+        }
+
+        // ៣. មុខងារ Filter តាម Status
+        if ($request->filled("status")) {
+            $query->where("status", $request->input("status"));
+        }
+
+        // ៤. ទាញយកទិន្នន័យ និងរៀបចំតាម ID ចុងក្រោយគេ (Latest)
+        $brands = $query->orderBy('id', 'desc')->get();
+
+        // ៥. Map ដើម្បីប្តូរ Path រូបភាពឱ្យទៅជា Full URL (អាស្រ័យលើ config/filesystems.php របស់អ្នក)
+        $brands->map(function ($brand) {
             $brand->image = $brand->image
                 ? asset('storage/' . $brand->image)
-                : asset('storage/no-image.jpg');
-
+                : asset('storage/no-image.jpg'); // បើអត់រូបភាពឱ្យបង្ហាញ no-image
             return $brand;
         });
 
+        // ៦. Return លទ្ធផលទៅឱ្យ Frontend
         return response()->json([
             'status' => 'success',
-            'data' => $brands
+            'data'   => $brands
         ]);
     }
 
@@ -57,7 +79,14 @@ class BrandController extends Controller
             'from_country' => 'required|string|max:255',
             'status' => 'required|in:active,disble',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
-        ]);
+        ],
+        [
+            // ប្ដូរ Message តាមចិត្តចង់នៅទីនេះ
+            'image.image' => 'ឯកសារត្រូវតែជាប្រភេទរូបភាព!',
+            'image.mimes' => 'រូបភាពអនុញ្ញាតតែប្រភេទ: jpeg, png, jpg តែប៉ុណ្ណោះ!',
+            'image.max'   => 'ទំហំរូបភាពមិនត្រូវលើសពី 2MB ឡើយ!',
+        ]
+        );
 
         $data = $request->only([
             'name',
@@ -78,6 +107,7 @@ class BrandController extends Controller
             : asset('storage/no-image.png');
 
         return response()->json([
+            'message' => 'create brand is successfully!!',
             'status' => 'success',
             'data' => $brand
         ], 201);
@@ -101,6 +131,12 @@ class BrandController extends Controller
             'from_country' => 'required|string|max:255',
             'status' => 'required|in:active,disble',
             'image' => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
+        ],
+        [
+            // ប្ដូរ Message តាមចិត្តចង់នៅទីនេះ
+            'image.image' => 'ឯកសារត្រូវតែជាប្រភេទរូបភាព!',
+            'image.mimes' => 'រូបភាពអនុញ្ញាតតែប្រភេទ: jpeg, png, jpg តែប៉ុណ្ណោះ!',
+            'image.max'   => 'ទំហំរូបភាពមិនត្រូវលើសពី 2MB ឡើយ!',
         ]);
 
         $data = $request->only([
@@ -130,6 +166,7 @@ class BrandController extends Controller
 
         return response()->json([
             'status' => 'success',
+            'message' => 'Update Brand is Successfully!!!',
             'data' => $brand
         ]);
     }
