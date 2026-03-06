@@ -7,6 +7,8 @@ use App\Http\Controllers\api\RoleController;
 use App\Http\Controllers\api\CategoryController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\BrandController;
+use App\Http\Controllers\Api\ProductController;
+
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -68,6 +70,21 @@ Route::middleware(['auth:api'])->group(function() {
         Route::delete('brand/{id}', 'destroy');
         Route::put('brand/{id}/status', 'updateStatus'); 
     });
+
+
+    // Product
+    Route::controller(ProductController::class)->group(function () {
+        // ដកចេញវិញសម្រាប់តែ index និង show ដើម្បីឱ្យគេមើលបានសេរី
+        Route::get('product', 'index')->withoutMiddleware(['auth:api']);
+        Route::get('product/{id}', 'show')->withoutMiddleware(['auth:api']);
+        // Route ខាងក្រោមនេះនឹងជាប់ Middleware ទាំងអស់
+        Route::post('product', 'store');
+        Route::post('product/{id}', 'update');
+        Route::delete('product/{id}', 'destroy');
+        Route::put('product/{id}/status', 'updateStatus'); 
+    });
+
+    
     
 });
 
