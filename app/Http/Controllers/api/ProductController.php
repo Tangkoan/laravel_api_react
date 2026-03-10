@@ -29,19 +29,41 @@ class ProductController extends Controller
             $query->where("status", $request->input("status"));
         }
 
-        $products = $query->orderBy('id', 'desc')->get();
+        // ៤. បន្ថែមមុខងារ Filter តាម Category ID
+        $query->when($request->filled("category_id"), function ($q) use ($request) {
+            $q->where("category_id", $request->input("category_id"));
+        });
 
-        // ៤. Map ដើម្បីប្តូរ Path រូបភាព
-        $products->map(function ($product) {
+        // ៥. បន្ថែមមុខងារ Filter តាម Brand ID
+        $query->when($request->filled("brand_id"), function ($q) use ($request) {
+            $q->where("brand_id", $request->input("brand_id"));
+        });
+
+        // ៦. ទាញយកទិន្នន័យ និងរៀបតាម ID ចុងក្រោយ
+        // $products = $query->orderBy('id', 'desc')->get();
+        // ប្រើ paginate ជំនួស get ដើម្បិតែទាញម្ដង 10 បានហើយកុំអោយ slow
+        $products = $query->orderBy('id', 'desc')->paginate(10);
+
+        // ឆែកមើលថា តើមានទិន្នន័យក្នុង Collection ឬទេ?
+        if ($products->isEmpty()) {
+            return response()->json([
+                'status'  => 'success', // នៅតែ success ព្រោះ API ដើរត្រឹមត្រូវ គ្រាន់តែរកមិនឃើញទិន្នន័យ
+                'message' => "Can't find this product", // សារដែលអ្នកចង់បង្ហាញ
+                'list'   => $products->items(), // ទិន្នន័យ Record
+                'total'  => $products->total(), // ចំនួនសរុបទាំងអស់ក្នុង DB
+            ]);
+        }
+
+        // ៧. កែសម្រួល Path រូបភាព (ប្រើ each វានឹងកែលើ collection ដើមតែម្ដង)
+        $products->each(function ($product) {
             $product->image = $product->image
                 ? asset('storage/' . $product->image)
                 : asset('storage/no-image.jpg'); 
-            return $product;
         });
 
         return response()->json([
             'status' => 'success',
-            'data'   => $products
+            'list'   => $products
         ]);
     }
 
@@ -63,7 +85,7 @@ class ProductController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data' => $product
+            'list' => $product
         ]);
     }
 
@@ -95,7 +117,7 @@ class ProductController extends Controller
         return response()->json([
             'message' => 'Product created successfully!',
             'status'  => 'success',
-            'data'    => $product
+            'list'    => $product
         ], 201);
     }
 
@@ -112,7 +134,7 @@ class ProductController extends Controller
         }
 
         $request->validate([
-            'category_id'  => 'required|exists:categories,id',
+            'category_id'  => 'required|exists:categories,id', // exists គឺសម្រាប់ចាប់ថា តើ category id ដែល user បញ្ចូលមានត្រូវគ្នានិង id category នោះឬអត់
             'brand_id'     => 'required|exists:brands,id',
             'product_name' => 'required|string|max:255',
             'quantity'     => 'required|integer|min:0',
@@ -140,7 +162,7 @@ class ProductController extends Controller
         return response()->json([
             'status'  => 'success',
             'message' => 'Product updated successfully!',
-            'data'    => $product
+            'list'    => $product
         ]);
     }
 
