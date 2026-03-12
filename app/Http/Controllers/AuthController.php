@@ -10,6 +10,9 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use App\Models\User;
 
+use Illuminate\Support\Facades\DB;
+
+
 
 class AuthController extends Controller
 {
@@ -72,6 +75,18 @@ class AuthController extends Controller
             $user->profile->image = asset('storage/' . $user->profile->image);
         }
 
+        // ប្រើប្រាស់ Raw SQL ដើម្បីទាញយក Permissions របស់ User នេះ
+        $permission = DB::select('
+            SELECT p.*
+            FROM permissions p
+            INNER JOIN user_permission_roles pr ON p.id = pr.permission_id
+            INNER JOIN roles r ON pr.role_id = r.id
+            INNER JOIN user_roles ur ON r.id = ur.role_id
+            WHERE ur.user_id = ?
+        ', [$user->id]);
+
+       
+
         return response()->json([
             'message'=> "Login successfully",
             
@@ -79,6 +94,7 @@ class AuthController extends Controller
 
             // 'user'=> JWTAuth::user(),
             'user'=> $user,
+            'permission'=> $permission,
         ], 201);
 
     }

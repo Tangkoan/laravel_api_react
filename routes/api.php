@@ -75,12 +75,12 @@ Route::middleware(['auth:api'])->group(function() {
     // Product
     Route::controller(ProductController::class)->group(function () {
         // ដកចេញវិញសម្រាប់តែ index និង show ដើម្បីឱ្យគេមើលបានសេរី
-        Route::get('product', 'index')->withoutMiddleware(['auth:api']);
+        Route::get('product', 'index')->withoutMiddleware(['auth:api'])->middleware('permission:Product.View');
         Route::get('product/{id}', 'show')->withoutMiddleware(['auth:api']);
         // Route ខាងក្រោមនេះនឹងជាប់ Middleware ទាំងអស់
-        Route::post('product', 'store');
-        Route::post('product/{id}', 'update');
-        Route::delete('product/{id}', 'destroy');
+        Route::post('product', 'store')->middleware('permission:Product.Add');
+        Route::post('product/{id}', 'update')->middleware('permission:Product.Edit');
+        Route::delete('product/{id}', 'destroy')->middleware('permission:Product.Delete');
         Route::put('product/{id}/status', 'updateStatus'); 
     });
 
